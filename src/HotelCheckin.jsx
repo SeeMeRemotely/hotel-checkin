@@ -6,6 +6,7 @@ export default function HotelCheckin() {
   const [people, setPeople] = useState([]);
   const [name, setName] = useState('');
   const [isMember, setIsMember] = useState(false);
+  const [isChild, setIsChild] = useState(false); // New child checkbox
 
   const getDateRange = (start, end) => {
     const dates = [];
@@ -56,9 +57,12 @@ export default function HotelCheckin() {
       dinner: false,
     }));
 
-    setPeople([...people, { name, isMember, meals: days }]);
+    const displayName = isChild ? `${name} (c)` : name;
+
+    setPeople([...people, { name: displayName, isMember, meals: days }]);
     setName('');
     setIsMember(false);
+    setIsChild(false); // reset checkbox
   };
 
   const toggleMeal = (personIdx, dayIdx, mealType) => {
@@ -99,7 +103,7 @@ export default function HotelCheckin() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>Hotel Check-In</h2>
+      <h2>Wauhillau Check-In</h2>
 
       <div>
         <label>Check-in Date: </label>
@@ -134,6 +138,17 @@ export default function HotelCheckin() {
             onChange={e => setIsMember(e.target.checked)}
           />
           Member
+        </label>
+      </div>
+
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={isChild}
+            onChange={e => setIsChild(e.target.checked)}
+          />
+          Child (8 and under)
         </label>
       </div>
 
