@@ -27,6 +27,13 @@ if (checkout < checkin) {
   alert("Checkout date cannot be before check-in date.");
   return;
 }
+const today = new Date().toISOString().split('T')[0];
+
+if (checkin < today || checkout < today) {
+  alert("Dates cannot be in the past.");
+  return;
+}
+
 
     const days = getDateRange(checkin, checkout).map(date => ({
       date,
