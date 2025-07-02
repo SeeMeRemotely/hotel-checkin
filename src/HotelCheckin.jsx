@@ -18,7 +18,16 @@ export default function HotelCheckin() {
   };
 
   const addPerson = () => {
-    if (!name || !checkin || !checkout) return;
+    if (!name || !checkin || !checkout) {
+  alert("Please fill in all required fields.");
+  return;
+}
+
+if (checkout < checkin) {
+  alert("Checkout date cannot be before check-in date.");
+  return;
+}
+
     const days = getDateRange(checkin, checkout).map(date => ({
       date,
       breakfast: false,
@@ -78,12 +87,25 @@ export default function HotelCheckin() {
 
       <div>
         <label>Check-in Date: </label>
-        <input type="date" value={checkin} onChange={e => setCheckin(e.target.value)} />
+        <input
+  type="date"
+  value={checkin}
+  onChange={e => setCheckin(e.target.value)}
+  min={new Date().toISOString().split('T')[0]}
+/>
+
       </div>
 
       <div>
         <label>Check-out Date: </label>
-        <input type="date" value={checkout} onChange={e => setCheckout(e.target.value)} />
+        <input
+  type="date"
+  value={checkout}
+  onChange={e => setCheckout(e.target.value)}
+  min={checkin || new Date().toISOString().split('T')[0]}
+/>
+
+
       </div>
 
       <div>
