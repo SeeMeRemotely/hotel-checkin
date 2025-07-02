@@ -122,7 +122,7 @@ export default function HotelCheckin() {
       </div>
 
       <div>
-        <label>Guest Name: </label>
+        <label>Full Name: </label>
         <input value={name} onChange={e => setName(e.target.value)} />
       </div>
 
