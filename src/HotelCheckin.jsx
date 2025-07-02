@@ -17,23 +17,37 @@ export default function HotelCheckin() {
     return dates;
   };
 
+  const isToday = (dateStr) => {
+    const today = new Date().toISOString().split('T')[0];
+    return dateStr === today;
+  };
+
+  const getMealLockout = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    if (hours > 15 || (hours === 15 && minutes >= 30)) return ['breakfast', 'lunch', 'dinner'];
+    if (hours >= 9) return ['breakfast', 'lunch'];
+    return ['breakfast'];
+  };
+
   const addPerson = () => {
     if (!name || !checkin || !checkout) {
-  alert("Please fill in all required fields.");
-  return;
-}
+      alert("Please fill in all required fields.");
+      return;
+    }
 
-if (checkout < checkin) {
-  alert("Checkout date cannot be before check-in date.");
-  return;
-}
-const today = new Date().toISOString().split('T')[0];
+    if (checkout < checkin) {
+      alert("Checkout date cannot be before check-in date.");
+      return;
+    }
 
-if (checkin < today || checkout < today) {
-  alert("Dates cannot be in the past.");
-  return;
-}
-
+    const today = new Date().toISOString().split('T')[0];
+    if (checkin < today || checkout < today) {
+      alert("Dates cannot be in the past.");
+      return;
+    }
 
     const days = getDateRange(checkin, checkout).map(date => ({
       date,
@@ -41,15 +55,10 @@ if (checkin < today || checkout < today) {
       lunch: false,
       dinner: false,
     }));
+
     setPeople([...people, { name, isMember, meals: days }]);
     setName('');
     setIsMember(false);
-  };
-
-  const removePerson = (index) => {
-    const updated = [...people];
-    updated.splice(index, 1);
-    setPeople(updated);
   };
 
   const toggleMeal = (personIdx, dayIdx, mealType) => {
@@ -90,29 +99,26 @@ if (checkin < today || checkout < today) {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>Wauhillau Check-In</h2>
+      <h2>Hotel Check-In</h2>
 
       <div>
         <label>Check-in Date: </label>
         <input
-  type="date"
-  value={checkin}
-  onChange={e => setCheckin(e.target.value)}
-  min={new Date().toISOString().split('T')[0]}
-/>
-
+          type="date"
+          value={checkin}
+          onChange={e => setCheckin(e.target.value)}
+          min={new Date().toISOString().split('T')[0]}
+        />
       </div>
 
       <div>
         <label>Check-out Date: </label>
         <input
-  type="date"
-  value={checkout}
-  onChange={e => setCheckout(e.target.value)}
-  min={checkin || new Date().toISOString().split('T')[0]}
-/>
-
-
+          type="date"
+          value={checkout}
+          onChange={e => setCheckout(e.target.value)}
+          min={checkin || new Date().toISOString().split('T')[0]}
+        />
       </div>
 
       <div>
@@ -122,7 +128,11 @@ if (checkin < today || checkout < today) {
 
       <div>
         <label>
-          <input type="checkbox" checked={isMember} onChange={e => setIsMember(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={isMember}
+            onChange={e => setIsMember(e.target.checked)}
+          />
           Member
         </label>
       </div>
@@ -134,60 +144,34 @@ if (checkin < today || checkout < today) {
       {people.map((person, personIdx) => (
         <div key={personIdx} style={{ marginBottom: '20px' }}>
           <strong>{person.name} ({person.isMember ? 'Member' : 'Guest'})</strong>
-          <button style={{ marginLeft: '10px' }} onClick={() => removePerson(personIdx)}>Remove</button>
           <div style={{ marginLeft: '20px' }}>
             {person.meals.map((day, dayIdx) => (
               <div key={day.date}>
                 <div>{day.date}</div>
-                {['breakfast', 'lunch', 'dinner'].map(meal => (
-                  <label key={meal} style={{ marginRight: '10px' }}>
-                    <input
-                      type="checkbox"
-                      checked={day[meal]}
-                      onChange={() => toggleMeal(personIdx, dayIdx, meal)}
-                    />
-                    {meal}
-                  </label>
-                ))}
+                {['breakfast', 'lunch', 'dinner'].map(meal => {
+                  const disabled = isToday(day.date) && getMealLockout().includes(meal);
+                  return (
+                    <label key={meal} style={{ marginRight: '10px', opacity: disabled ? 0.5 : 1 }}>
+                      <input
+                        type="checkbox"
+                        checked={day[meal]}
+                        onChange={() => toggleMeal(personIdx, dayIdx, meal)}
+                        disabled={disabled}
+                      />
+                      {meal}
+                    </label>
+                  );
+                })}
               </div>
             ))}
           </div>
         </div>
       ))}
 
-      {/* Summary Table */}
       {people.length > 0 && (
-        <>
-          <h3>Summary Preview</h3>
-          <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse', marginBottom: '20px' }}>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th>Member</th>
-                <th>Breakfast</th>
-                <th>Lunch</th>
-                <th>Dinner</th>
-              </tr>
-            </thead>
-            <tbody>
-              {people.map((person, personIdx) =>
-                person.meals.map((meal, mealIdx) => (
-                  <tr key={`${personIdx}-${meal.date}`}>
-                    <td>{meal.date}</td>
-                    <td>{person.name}</td>
-                    <td>{person.isMember ? 'Yes' : 'No'}</td>
-                    <td>{meal.breakfast ? 'Yes' : ''}</td>
-                    <td>{meal.lunch ? 'Yes' : ''}</td>
-                    <td>{meal.dinner ? 'Yes' : ''}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-
+        <div>
           <button onClick={submitToSheet}>Submit to Google Sheets</button>
-        </>
+        </div>
       )}
     </div>
   );
