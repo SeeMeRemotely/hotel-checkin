@@ -104,7 +104,7 @@ export default function HotelCheckin({ memberNumber }) {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>Hotel Check-In</h2>
+      <h2>Wauhillau Check-In</h2>
 
       <div>
         <label>Check-in Date: </label>
