@@ -2,28 +2,37 @@ import { useState, useEffect } from 'react';
 import HotelCheckin from './HotelCheckin';
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState(null);
   const [pinInput, setPinInput] = useState('');
 
-  const correctPin = '2009228'; // 🔒 Your custom PIN
+  // 🔷 Roster of valid PINs and users
+  const users = {
+    "1234": { memberNumber: "14", name: "John Abdo" },
+    "1304": { memberNumber: "10", name: "Martha Alford" },
+    "1374": { memberNumber: "11", name: "Andy Anderson" },
+    "1444": { memberNumber: "15", name: "Eric Anderson" },
+    "1514": { memberNumber: "13", name: "Evan Anderson" },
+    "2009228": { memberNumber: "2009228", name: "System Test" }
+  };
 
   useEffect(() => {
-    const saved = localStorage.getItem('authenticated');
-    if (saved === 'true') {
-      setAuthenticated(true);
+    const saved = localStorage.getItem('authenticatedUser');
+    if (saved) {
+      setAuthenticatedUser(JSON.parse(saved));
     }
   }, []);
 
   const handleLogin = () => {
-    if (pinInput === correctPin) {
-      localStorage.setItem('authenticated', 'true');
-      setAuthenticated(true);
+    if (users[pinInput]) {
+      const user = users[pinInput];
+      localStorage.setItem('authenticatedUser', JSON.stringify(user));
+      setAuthenticatedUser(user);
     } else {
       alert('Incorrect PIN');
     }
   };
 
-  if (!authenticated) {
+  if (!authenticatedUser) {
     return (
       <div style={{ padding: '40px', fontFamily: 'Arial', textAlign: 'center' }}>
         <h2>Enter PIN to Access</h2>
@@ -41,7 +50,7 @@ function App() {
     );
   }
 
-  return <HotelCheckin />;
+  return <HotelCheckin memberNumber={authenticatedUser.memberNumber} />;
 }
 
 export default App;

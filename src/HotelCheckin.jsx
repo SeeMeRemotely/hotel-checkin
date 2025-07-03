@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-export default function HotelCheckin() {
+export default function HotelCheckin({ memberNumber }) {
   const [checkin, setCheckin] = useState('');
   const [checkout, setCheckout] = useState('');
   const [people, setPeople] = useState([]);
   const [name, setName] = useState('');
   const [isMember, setIsMember] = useState(false);
-  const [isChild, setIsChild] = useState(false); // New child checkbox
+  const [isChild, setIsChild] = useState(false);
 
   const getDateRange = (start, end) => {
     const dates = [];
@@ -62,7 +62,7 @@ export default function HotelCheckin() {
     setPeople([...people, { name: displayName, isMember, meals: days }]);
     setName('');
     setIsMember(false);
-    setIsChild(false); // reset checkbox
+    setIsChild(false);
   };
 
   const toggleMeal = (personIdx, dayIdx, mealType) => {
@@ -83,6 +83,7 @@ export default function HotelCheckin() {
           breakfast: meal.breakfast ? 'Yes' : '',
           lunch: meal.lunch ? 'Yes' : '',
           dinner: meal.dinner ? 'Yes' : '',
+          memberNumber: memberNumber
         });
       });
     });
@@ -103,7 +104,7 @@ export default function HotelCheckin() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>Wauhillau Check-In</h2>
+      <h2>Hotel Check-In</h2>
 
       <div>
         <label>Check-in Date: </label>
@@ -126,7 +127,7 @@ export default function HotelCheckin() {
       </div>
 
       <div>
-        <label>Full Name: </label>
+        <label>Guest Name: </label>
         <input value={name} onChange={e => setName(e.target.value)} />
       </div>
 
