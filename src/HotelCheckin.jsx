@@ -77,6 +77,7 @@ export default function HotelCheckin({ memberNumber }) {
     people.forEach(person => {
       person.meals.forEach(meal => {
         data.push({
+          id: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
           date: meal.date,
           name: person.name,
           member: person.isMember ? 'Yes' : 'No',

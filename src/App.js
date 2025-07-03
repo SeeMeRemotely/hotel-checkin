@@ -107,7 +107,7 @@ function App() {
   const deleteBooking = async (row) => {
     if (!window.confirm(`Delete booking for ${row.name} on ${row.date}?`)) return;
 
-    await fetch(`${SHEETDB_URL}/search?memberNumber=${row.memberNumber}&date=${row.date}&name=${encodeURIComponent(row.name)}`, {
+    await fetch(`${SHEETDB_URL}/search?id=${row.id}`, {
       method: 'DELETE'
     });
     fetchFutureMeals(row.memberNumber);
@@ -117,7 +117,7 @@ function App() {
     if (!window.confirm("Are you sure you want to clear all future bookings?")) return;
 
     for (const row of futureMeals) {
-      await fetch(`${SHEETDB_URL}/search?memberNumber=${row.memberNumber}&date=${row.date}&name=${encodeURIComponent(row.name)}`, {
+      await fetch(`${SHEETDB_URL}/search?id=${row.id}`, {
         method: 'DELETE'
       });
     }
