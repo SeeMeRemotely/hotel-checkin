@@ -107,7 +107,7 @@ function App() {
   const deleteBooking = async (row) => {
     if (!window.confirm(`Delete booking for ${row.name} on ${row.date}?`)) return;
 
-    await fetch(`${SHEETDB_URL}/search?id=${row.id}`, {
+    await fetch(`${SHEETDB_URL}/id/${row.id}`, {
       method: 'DELETE'
     });
     fetchFutureMeals(row.memberNumber);
@@ -117,7 +117,7 @@ function App() {
     if (!window.confirm("Are you sure you want to clear all future bookings?")) return;
 
     for (const row of futureMeals) {
-      await fetch(`${SHEETDB_URL}/search?id=${row.id}`, {
+      await fetch(`${SHEETDB_URL}/id/${row.id}`, {
         method: 'DELETE'
       });
     }
@@ -144,7 +144,18 @@ function App() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>Welcome, {authenticatedUser.name}</h2>
+      <h2>
+        Welcome, {authenticatedUser.name}
+        <button
+          onClick={() => {
+            localStorage.removeItem('authenticatedUser');
+            window.location.reload();
+          }}
+          style={{ marginLeft: '20px', padding: '4px 8px', fontSize: '14px' }}
+        >
+          Log Out
+        </button>
+      </h2>
 
       {futureMeals.length > 0 && (
         <div style={{ marginBottom: '20px' }}>
