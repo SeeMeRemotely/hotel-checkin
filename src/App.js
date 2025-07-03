@@ -6,6 +6,32 @@ function App() {
   const [pinInput, setPinInput] = useState('');
   const [futureMeals, setFutureMeals] = useState([]);
 
+  const appStyle = {
+    minHeight: '100vh',
+    backgroundImage: `url('/background.jpg')`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    position: 'relative',
+    fontFamily: 'Arial'
+  };
+
+  const overlayStyle = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    zIndex: 0
+  };
+
+  const contentStyle = {
+    position: 'relative',
+    zIndex: 1,
+    padding: '20px'
+  };
+
   const users = {
     "1234": { memberNumber: "14", name: "John Abdo" },
     "1304": { memberNumber: "10", name: "Martha Alford" },
@@ -126,64 +152,70 @@ function App() {
 
   if (!authenticatedUser) {
     return (
-      <div style={{ padding: '40px', fontFamily: 'Arial', textAlign: 'center' }}>
-        <h2>Enter PIN to Access</h2>
-        <input
-          type="password"
-          value={pinInput}
-          onChange={(e) => setPinInput(e.target.value)}
-          style={{ fontSize: '18px', padding: '6px' }}
-        />
-        <br />
-        <button onClick={handleLogin} style={{ marginTop: '10px', padding: '8px 16px' }}>
-          Submit
-        </button>
+      <div style={appStyle}>
+        <div style={overlayStyle}></div>
+        <div style={contentStyle}>
+          <h2>Enter PIN to Access</h2>
+          <input
+            type="password"
+            value={pinInput}
+            onChange={(e) => setPinInput(e.target.value)}
+            style={{ fontSize: '18px', padding: '6px' }}
+          />
+          <br />
+          <button onClick={handleLogin} style={{ marginTop: '10px', padding: '8px 16px' }}>
+            Submit
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>
-        Welcome, {authenticatedUser.name}
-        <button
-          onClick={() => {
-            localStorage.removeItem('authenticatedUser');
-            window.location.reload();
-          }}
-          style={{ marginLeft: '20px', padding: '4px 8px', fontSize: '14px' }}
-        >
-          Log Out
-        </button>
-      </h2>
-
-      {futureMeals.length > 0 && (
-        <div style={{ marginBottom: '20px' }}>
-          <h3>Future Bookings:</h3>
-          {futureMeals.map((row, idx) => (
-            <div key={idx} style={{ marginBottom: '4px' }}>
-              📅 {row.date} — {row.name}:
-              {['breakfast', 'lunch', 'dinner']
-                .filter(meal => row[meal] === 'Yes')
-                .join(', ') || 'No meals booked'}
-              <button
-                onClick={() => deleteBooking(row)}
-                style={{ marginLeft: '10px', color: 'red' }}
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          ))}
+    <div style={appStyle}>
+      <div style={overlayStyle}></div>
+      <div style={contentStyle}>
+        <h2>
+          Welcome, {authenticatedUser.name}
           <button
-            onClick={deleteAllBookings}
-            style={{ marginTop: '10px', backgroundColor: 'red', color: 'white' }}
+            onClick={() => {
+              localStorage.removeItem('authenticatedUser');
+              window.location.reload();
+            }}
+            style={{ marginLeft: '20px', padding: '4px 8px', fontSize: '14px' }}
           >
-            Start Over (Clear All)
+            Log Out
           </button>
-        </div>
-      )}
+        </h2>
 
-      <HotelCheckin memberNumber={authenticatedUser.memberNumber} />
+        {futureMeals.length > 0 && (
+          <div style={{ marginBottom: '20px' }}>
+            <h3>Future Bookings:</h3>
+            {futureMeals.map((row, idx) => (
+              <div key={idx} style={{ marginBottom: '4px' }}>
+                📅 {row.date} — {row.name}:
+                {['breakfast', 'lunch', 'dinner']
+                  .filter(meal => row[meal] === 'Yes')
+                  .join(', ') || 'No meals booked'}
+                <button
+                  onClick={() => deleteBooking(row)}
+                  style={{ marginLeft: '10px', color: 'red' }}
+                >
+                  🗑️ Delete
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={deleteAllBookings}
+              style={{ marginTop: '10px', backgroundColor: 'red', color: 'white' }}
+            >
+              Start Over (Clear All)
+            </button>
+          </div>
+        )}
+
+        <HotelCheckin memberNumber={authenticatedUser.memberNumber} />
+      </div>
     </div>
   );
 }
